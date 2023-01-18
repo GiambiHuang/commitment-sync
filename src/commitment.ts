@@ -1,34 +1,38 @@
 import { db } from "./db";
-import { decryptAbarMemo } from "./triple-masking";
-import { AbarMemo, AbarMemoSchema, Account } from "./types";
-import { fetchLatestMemos } from "./abarMemo";
-import { getMAS } from "./apis";
-import SyncWorker from 'web-worker:./web-worker/sync';
+import { FetchWorkerResponse } from "./types";
+// import { fetchLatestMemos } from "./abarMemo";
 
 export const syncAll = async () => {
-  await fetchLatestMemos();
   const accounts = await db.getAccounts();
-  let currentMAS = await getMAS();
-  let memos: AbarMemoSchema[] = [];
-  while (currentMAS >= 0) {
-    const fromIdx = Math.max(0, currentMAS - 99);
-    const abarsMemos = await db.getAbarMemos(fromIdx, currentMAS);
-    memos = memos.concat(abarsMemos);
-    currentMAS = fromIdx - 1;
+
+  // @ts-ignore
+  const fetchWorker = new Worker(new URL('./web-worker/fetch.ts', import.meta.url));
+  const fetchResult: FetchWorkerResponse = await new Promise((resolve) => {
+    fetchWorker.postMessage({});
+    fetchWorker.onmessage = (e) => {
+      fetchWorker.terminate();
+      resolve(e.data)
+    }
+  })
+  console.log('Message received fetch worker:', fetchResult);
+
+  if (fetchResult.success && fetchResult.mas) {
+    for (const account of accounts) {
+      if (account.lastSid >= fetchResult.mas) continue;
+      console.log(account.axfrPublicKey);
+      console.log(`account last sid: ${account.lastSid}`);
+      // @ts-ignore
+      const worker = new Worker(new URL('./web-worker/sync.ts', import.meta.url));
+      worker.postMessage({
+        account,
+        startIdx: account.lastSid,
+      });
+      worker.onmessage = (e) => {
+        const { commitments, account } = e.data;
+        worker.terminate();
+        db.addCommitments(commitments);
+        console.log('Message received from worker:', e.data);
+      }
+    }
   }
-  for (const account of accounts) {
-    const syncWorker = new SyncWorker();
-    syncWorker.postMessage({ account, memos });
-  }
-  // const abarMemos = await db.
-  // for (const abarMemoItem of abarMemos) {
-  //   const { sid, memo } = abarMemoItem;
-  //   const isDecrypted = await decryptAbarMemo(memo, zkAccount);
-  //   console.log(sid);
-  //   console.log('isDecrypted:', isDecrypted);
-  //   if (isDecrypted) {
-  //     const commitment = await Apis.getCommitment(sid);
-  //     this.addCommitment(commitment, sid, zkAccount.axfrPublicKey)
-  //   }
-  // }
 }

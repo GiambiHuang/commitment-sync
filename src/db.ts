@@ -35,21 +35,30 @@ class CommitmentDB implements ICommitmentDB {
     this.queryURL = [envBaseURL, envQueryPort && `:${envQueryPort}`].filter(Boolean).join('');
 
     this.initialized = false;
-    if (window.indexedDB) {
-      const request = window.indexedDB.open(this.dbFullName);
-      request.onsuccess = (event) => {
-        const { result } = event.target as IDBOpenDBRequest;
-        this.setDB(result);
-      }
-      request.onupgradeneeded = (event) => {
-        const { result } = event.target as IDBOpenDBRequest;
-        const storesObject = Object.values(stores);
-        for (const objectStore of storesObject) {
-          result.createObjectStore(objectStore.store, objectStore.storeConfig);
+    return new Promise((resolve, reject) => {
+      if (window?.indexedDB) {
+        const request = window.indexedDB.open(this.dbFullName);
+        request.onsuccess = (event) => {
+          const { result } = event.target as IDBOpenDBRequest;
+          this.setDB(result);
+          resolve(true);
         }
-        this.setDB(result);
+        request.onupgradeneeded = (event) => {
+          const { result } = event.target as IDBOpenDBRequest;
+          const storesObject = Object.values(stores);
+          for (const objectStore of storesObject) {
+            const store = result.createObjectStore(objectStore.store, objectStore.storeConfig);
+            for (const index of (objectStore.index || [])) {
+              store.createIndex(index, index, { unique: false });
+            }
+          }
+          this.setDB(result);
+          resolve(true);
+        }
+      } else {
+        reject(false);
       }
-    }
+    })
   }
 
   private setDB (db: IDBDatabase) {
@@ -167,6 +176,10 @@ class CommitmentDB implements ICommitmentDB {
         reject('error');
       }
     })
+  }
+
+  close () {
+    this.db.close && this.db.close();
   }
 }
 

@@ -12,7 +12,7 @@ export type AbarMemo = [
 ]
 
 export type AccountSchema = Account &{
-  lastSid?: number;
+  lastSid: number;
 }
 
 export type AbarMemoSchema = {
@@ -24,4 +24,10 @@ export type CommitmentSchema = {
   commitment: string;
   sid: number;
   axfrPublicKey: Account['axfrPublicKey'];
+}
+
+export type FetchWorkerResponse = {
+  success: boolean;
+  message?: string;
+  mas?: number;
 }

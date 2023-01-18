@@ -1,6 +1,5 @@
-import { AbarMemo, Account } from './types';
 import * as ledger from 'findora-wallet-wasm/web-lightweight';
-import('findora-wallet-wasm/web-lightweight/wasm_bg.wasm');
+import { AbarMemo, Account } from './types';
 
 export const getLedger = async () => {
   try {
@@ -13,7 +12,6 @@ export const getLedger = async () => {
 
 export const initLedger = async () => {
   try {
-    console.log(new URL('findora-wallet-wasm/web-lightweight/wasm_bg.wasm', import.meta.url));
     const ledger: any = await getLedger();
     if (typeof ledger?.default === 'function') {
       await ledger?.default();
@@ -33,8 +31,8 @@ export const decryptAbarMemo = async (abarMemo: AbarMemo, axfrSecretKey: Account
   // let decryptedAbar: Uint8Array;
   try {
     (ledger as any).try_decrypt_axfr_memo(abarOwnerMemo, aXfrSecretKeyConverted);
+    return true;
   } catch (error) {
     return false;
   }
-  return true;
 }

@@ -13,6 +13,7 @@ export type EnvConfig = {
 export type StoreMeta = {
   store: string;
   storeConfig: any;
+  index?: string[];
 }
 
 const STORE_ABAR_MEMOS = 'abar_memos' as const;
@@ -36,6 +37,7 @@ export const DEFAULT_ENV_CONFIG: EnvConfig = {
     commitments: {
       store: STORE_COMMITMENTS,
       storeConfig: { keyPath: 'sid' },
+      index: ['axfrPublicKey'],
     }
   },
 };
