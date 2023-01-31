@@ -1,5 +1,5 @@
 
-## local testing
+# local testing
 ```bash
 $ yarn
 $ yarn build:dev
@@ -9,6 +9,15 @@ $ yarn start
 ```
 
 ---
+
+# Production build
+
+```bash
+$ yarn
+$ yarn build:umd
+```
+
+
 
 ## Library Usage
 
