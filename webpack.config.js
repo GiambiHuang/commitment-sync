@@ -4,12 +4,6 @@ const webpack = require('webpack');
 const config = {
   mode: 'production',
   entry: './src/index.ts',
-  // optimization: {
-  //   minimize: true,
-  //   minimizer: [
-  //     new TerserPlugin({ test: /.min.js$/ }),
-  //   ],
-  // },
   externals: "findora-wallet-wasm/web-lightweight",
   module: {
     rules: [
@@ -29,7 +23,9 @@ const config = {
   },
   output: {
     filename: "index.js",
+    chunkFilename: "workers.js",
     path: path.resolve(__dirname, 'dist'),
+    publicPath: "./",
     library: {
       name: 'commitment-sync',
       type: 'umd',

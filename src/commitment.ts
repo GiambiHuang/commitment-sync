@@ -6,7 +6,9 @@ export const syncAll = async () => {
   const accounts = await db.getAccounts();
 
   // check if there is any the latest abar and save it to indexeddb
-  const fetchWorker = new Worker(new URL('./web-worker/fetch.worker.ts', import.meta.url));
+  const fetchWorker = new Worker(
+    new URL('./web-worker/fetch.worker.ts', import.meta.url)  
+  );
   const fetchResult: FetchWorkerResponse = await new Promise((resolve) => {
     fetchWorker.postMessage({});
     fetchWorker.onmessage = (e) => {

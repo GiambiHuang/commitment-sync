@@ -4,12 +4,6 @@ const webpack = require('webpack');
 const config = {
   mode: 'production',
   entry: './src/index.ts',
-  // optimization: {
-  //   minimize: true,
-  //   minimizer: [
-  //     new TerserPlugin({ test: /.min.js$/ }),
-  //   ],
-  // },
   externals: "findora-wallet-wasm/web-lightweight",
   module: {
     rules: [
@@ -42,7 +36,7 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       __IN_LOCAL__: true
-    }),
+    })
   ],
   devtool: 'source-map',
 };
