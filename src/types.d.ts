@@ -1,3 +1,5 @@
+declare var __IN_LOCAL__: boolean;
+
 export type Account = {
   axfrPublicKey: string;
   axfrSecretKey: string;

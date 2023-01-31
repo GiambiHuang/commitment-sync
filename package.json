@@ -2,13 +2,18 @@
   "name": "commitment-sync",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "build-dev": "webpack -c webpack.config.dev.ts --node-env production --env NODE_ENV=production",
-    "build": "webpack -c webpack.config.ts --node-env production --env NODE_ENV=production",
-    "start": "yarn build-dev && http-server ./public",
+    "build:umd": "webpack --config webpack.config.js",
+    "build:dev": "webpack --config webpack.config.dev.js",
+    "build": "yarn clean && yarn build:umd",
+    "start": "http-server ./public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "author": "GiambiHuang",
   "license": "ISC",
   "devDependencies": {
@@ -26,8 +31,5 @@
   },
   "dependencies": {
     "findora-wallet-wasm": "https://github.com/FindoraNetwork/wasm-js-bindings.git#develop"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

@@ -10,7 +10,6 @@ type SyncWorkerData = {
   envConfig?: EnvConfig;
 }
 
-
 self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
@@ -43,3 +42,4 @@ self.onmessage = async function (e) {
     account,
   });
 }
+export default null as any;

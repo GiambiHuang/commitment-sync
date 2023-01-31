@@ -4,7 +4,6 @@ import * as Apis from '../apis';
 self.onmessage = async function () {
   var window = globalThis;
   window.window = globalThis as any;
-
   try {
     await db.init();
     const mas = await Apis.getMAS();
@@ -25,3 +24,5 @@ self.onmessage = async function () {
     db.close();
   }
 }
+
+export {};

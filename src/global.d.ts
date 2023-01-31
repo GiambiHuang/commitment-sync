@@ -1,0 +1,1 @@
+declare var __IN_LOCAL__: boolean;
