@@ -12,6 +12,15 @@ $ yarn start
 
 ## Library Usage
 
+### required dependency
+```json
+{
+  "dependencies": {
+    "findora-wallet-wasm": "https://github.com/FindoraNetwork/wasm-js-bindings.git#develop"
+  }
+}
+```
+
 ```js
 import { db } from 'commitment-sync';
 // initial db first
