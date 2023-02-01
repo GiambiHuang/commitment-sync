@@ -1,45 +1,59 @@
 import { decryptAbarMemo, initLedger } from '../triple-masking';
-import { AccountSchema } from "../types";
 import { getCommitment } from '../apis';
 import { db } from '../db';
 import { EnvConfig } from '../config';
+import { CommitmentSchema } from '../types';
 
 type SyncWorkerData = {
-  account: AccountSchema;
-  startIdx: number;
+  mas: number
   envConfig?: EnvConfig;
 }
 
 self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
-  const { account, startIdx } = e.data as SyncWorkerData;
-  await Promise.all([
-    db.init(),
-    initLedger()
-  ]);
-  const memos = await db.getAbarMemos(startIdx);
-  const promiseResults = await Promise.all(
-    memos.map(memoItem =>
-      decryptAbarMemo(memoItem.memo, account.axfrSecretKey)
-        .then(isDecrypted => isDecrypted ?
-          getCommitment(memoItem.sid, db.queryURL) :
-          Promise.resolve('')
+  const { mas } = e.data as SyncWorkerData;
+  try {
+    await Promise.all([
+      db.init(),
+      initLedger()
+    ]);
+    const accounts = await db.getAccounts();
+    for (const account of accounts) {
+      if (account.lastSid >= mas) continue;
+      console.log(account.axfrPublicKey);
+      console.log(`account last sid: ${account.lastSid}`);
+      const memos = await db.getAbarMemos(account.lastSid);
+      const promiseResults = await Promise.all(
+        memos.map(memoItem =>
+          decryptAbarMemo(memoItem.memo, account.axfrSecretKey)
+            .then(isDecrypted => isDecrypted ?
+              getCommitment(memoItem.sid, db.queryURL) :
+              Promise.resolve('')
+            )
+            .then(commitment => commitment ?
+              ({
+                axfrPublicKey: account.axfrPublicKey,
+                sid: memoItem.sid,
+                commitment,
+              }) :
+              undefined
+            )
         )
-        .then(commitment => commitment ?
-          ({
-            axfrPublicKey: account.axfrPublicKey,
-            sid: memoItem.sid,
-            commitment,
-          }) :
-          undefined
-        )
-    )
-  );
-  db.close();
-  self.postMessage({
-    commitments: promiseResults.filter(Boolean),
-    account,
-  });
+      );
+      const commitments: CommitmentSchema[] = [];
+      for (const result of promiseResults) {
+        if (result) commitments.push(result);
+      }
+      // const commitments = promiseResults.filter(Boolean);
+      db.addCommitments(commitments);
+    }
+    self.postMessage({ success: true, mas });
+  } catch (error) {
+    self.postMessage({ success: false, message: (error as Error).message });
+  } finally {
+    db.close();
+  }
 }
+
 export default null as any;

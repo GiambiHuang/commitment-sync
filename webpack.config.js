@@ -3,8 +3,14 @@ const webpack = require('webpack');
 
 const config = {
   mode: 'production',
-  entry: './src/index.ts',
-  externals: "findora-wallet-wasm/web-lightweight",
+  entry: {
+    index: './src/index.ts',
+    "fetch-worker": "./src/web-worker/fetch.worker.ts",
+    "sync-worker": "./src/web-worker/sync.worker.ts"
+  },
+  externals: [
+    "findora-wallet-wasm/web-lightweight",
+  ],
   module: {
     rules: [
       {
@@ -22,8 +28,7 @@ const config = {
     syncWebAssembly: true
   },
   output: {
-    filename: "index.js",
-    chunkFilename: "workers.js",
+    filename: "[name].js",
     path: path.resolve(__dirname, 'dist'),
     publicPath: "./",
     library: {

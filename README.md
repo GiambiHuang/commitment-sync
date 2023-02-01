@@ -49,5 +49,15 @@ account.add({
 ## commitment module
 ```js
 import { commitment } from 'commitment-sync';
-commitment.syncAll()
+
+// sync commitments for all accounts
+commitment.syncAll(
+  new URL('commitment-sync/fetch-worker.js', import.meta.url),
+  new URL('commitment-sync/sync-worker.js', import.meta.url),
+)
+
+// get account's commitments
+const axfrPublicKey = '';
+const commitments = await commitment.get(axfrPublicKey);
+
 ```

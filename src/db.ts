@@ -178,6 +178,21 @@ class CommitmentDB implements ICommitmentDB {
     })
   }
 
+  getCommitments (axfrPublicKey: AccountSchema['axfrPublicKey']): Promise<CommitmentSchema[]> {
+    if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
+    return new Promise((resolve, reject) => {
+      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.commitments ?? {};
+      const tx = this.db.transaction(storeName, 'readwrite');
+      const store = tx.objectStore(storeName);
+      const index = store.index('axfrPublicKey');
+      const indexRequest = index.get(axfrPublicKey);
+      indexRequest.onsuccess = () => {
+        resolve(indexRequest.result);
+      }
+      indexRequest.onerror = reject;
+    })
+  }
+
   close () {
     this.db.close && this.db.close();
   }
