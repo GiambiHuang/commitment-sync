@@ -45,11 +45,12 @@ db.init(envConfig);
 ```
 
 ## account module
+- account.add(account)
 ```js
 import { account } from 'commitment-sync';
 account.add({
-  axfrPublicKey: string;
-  axfrSecretKey: string;
+  axfrPublicKey: '';
+  axfrSecretKey: '';
 })
 ```
 ---
@@ -72,7 +73,7 @@ const result = await commitment.syncAll(
 // }
 ```
 
-- commitment.get()
+- commitment.get(axfrPublicKey: string)
 ```js
 import { commitment } from 'commitment-sync';
 
