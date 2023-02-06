@@ -44,42 +44,40 @@ const envConfig = {
 db.init(envConfig);
 ```
 
-## account module
-- account.add(account)
-```js
-import { account } from 'commitment-sync';
-account.add({
-  axfrPublicKey: '';
-  axfrSecretKey: '';
-})
-```
----
-## commitment module
+- ## account module
+  - account.add(account)
+    ```js
+    import { account } from 'commitment-sync';
+    account.add({
+      axfrPublicKey: '';
+      axfrSecretKey: '';
+    })
+    ```
+- ## commitment module
+  - commitment.syncAll(WorkerScriptURL, WorkerScriptURL)
+    ```js
+    import { commitment } from 'commitment-sync';
 
-- commitment.syncAll(WorkerScriptURL, WorkerScriptURL)
-```js
-import { commitment } from 'commitment-sync';
+    // sync commitments for all accounts
+    const result = await commitment.syncAll(
+      new URL('commitment-sync/fetch-worker.js', import.meta.url),
+      new URL('commitment-sync/sync-worker.js', import.meta.url),
+    )
 
-// sync commitments for all accounts
-const result = await commitment.syncAll(
-  new URL('commitment-sync/fetch-worker.js', import.meta.url),
-  new URL('commitment-sync/sync-worker.js', import.meta.url),
-)
+    // result:
+    // {
+    //   success: boolean,
+    //   message?: string, // error message
+    // }
+    ```
 
-// result:
-// {
-//   success: boolean,
-//   message?: string, // error message
-// }
-```
+  - commitment.get(axfrPublicKey: string)
+    ```js
+    import { commitment } from 'commitment-sync';
 
-- commitment.get(axfrPublicKey: string)
-```js
-import { commitment } from 'commitment-sync';
+    // get account's commitments
+    const axfrPublicKey = '';
+    const commitments = await commitment.get(axfrPublicKey);
 
-// get account's commitments
-const axfrPublicKey = '';
-const commitments = await commitment.get(axfrPublicKey);
-
-// commitments:CommitmentSchema[]
-```
+    // commitments:CommitmentSchema[]
+    ```
