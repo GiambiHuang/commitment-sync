@@ -30,7 +30,6 @@ class CommitmentDB implements ICommitmentDB {
 
   init (config: EnvConfig = DEFAULT_ENV_CONFIG) {
     this.setEnvConfig(config);
-    console.log('this.envConfig.envName:', this.envConfig.envName, this.envConfig.envBaseURL);
     const {
       dbName,
       envName,
@@ -38,7 +37,6 @@ class CommitmentDB implements ICommitmentDB {
       envQueryPort,
       stores = {},
     } = this.envConfig;
-    console.log('this.envConfig.envName:', envName, envQueryPort);
 
     this.dbFullName = `${dbName}_${envName}`;
     this.queryURL = [envBaseURL, envQueryPort && `:${envQueryPort}`].filter(Boolean).join('');
