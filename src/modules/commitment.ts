@@ -37,7 +37,7 @@ export const syncAll = async (fetchWorkerScript: URL, syncWorkerScript: URL) => 
         resolve(e.data);
       }
     } else {
-      resolve({});
+      resolve({ success: true });
     }
   });
 }

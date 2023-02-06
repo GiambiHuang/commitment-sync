@@ -1,4 +1,4 @@
-
+<!-- 
 # local testing
 ```bash
 $ yarn
@@ -8,18 +8,17 @@ $ yarn start
 ## Available on http://127.0.0.1:8080
 ```
 
----
+--- -->
 
 # Production build
 
 ```bash
 $ yarn
-$ yarn build:umd
+$ yarn build
 ```
 
 
-
-## Library Usage
+---
 
 ### required dependency
 ```json
@@ -55,17 +54,31 @@ account.add({
 ```
 ---
 ## commitment module
+
+- commitment.syncAll(WorkerScriptURL, WorkerScriptURL)
 ```js
 import { commitment } from 'commitment-sync';
 
 // sync commitments for all accounts
-commitment.syncAll(
+const result = await commitment.syncAll(
   new URL('commitment-sync/fetch-worker.js', import.meta.url),
   new URL('commitment-sync/sync-worker.js', import.meta.url),
 )
+
+// result:
+// {
+//   success: boolean,
+//   message?: string, // error message
+// }
+```
+
+- commitment.get()
+```js
+import { commitment } from 'commitment-sync';
 
 // get account's commitments
 const axfrPublicKey = '';
 const commitments = await commitment.get(axfrPublicKey);
 
+// commitments:CommitmentSchema[]
 ```

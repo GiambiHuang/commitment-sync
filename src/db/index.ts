@@ -194,9 +194,9 @@ class CommitmentDB implements ICommitmentDB {
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       const index = store.index('axfrPublicKey');
-      const indexRequest = index.get(axfrPublicKey);
+      const indexRequest: IDBRequest<CommitmentSchema[]> = index.get(axfrPublicKey);
       indexRequest.onsuccess = () => {
-        resolve(indexRequest.result);
+        resolve(indexRequest.result || []);
       }
       indexRequest.onerror = reject;
     })
