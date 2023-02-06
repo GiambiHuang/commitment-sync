@@ -12,10 +12,10 @@ type SyncWorkerData = {
 self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
-  const { mas } = e.data as SyncWorkerData;
+  const { mas, envConfig } = e.data as SyncWorkerData;
   try {
     await Promise.all([
-      db.init(),
+      db.init(envConfig),
       initLedger()
     ]);
     const accounts = await db.getAccounts();

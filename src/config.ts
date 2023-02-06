@@ -1,7 +1,7 @@
 export type EnvConfig = {
   dbName?: string;
   envName?: string;
-  envBaseURL?: string;
+  envBaseURL: string;
   envQueryPort?: string;
   stores?: {
     accounts?: StoreMeta;

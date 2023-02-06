@@ -6,30 +6,37 @@ interface ICommitmentDB {
   dbFullName: string;
   initialized: boolean;
   queryURL: string;
+  envConfig: EnvConfig;
 }
 
 class CommitmentDB implements ICommitmentDB {
   private db = {} as IDBDatabase;
-  static envConfig = DEFAULT_ENV_CONFIG;
-  static setEnvConfig (newEnvConfig: EnvConfig) {
-    this.envConfig = newEnvConfig;
-  }
+
   dbFullName = '';
   initialized = false;
   queryURL = '';
+  envConfig = DEFAULT_ENV_CONFIG;
 
   constructor () {
     initLedger();
   }
 
-  init () {
+  setEnvConfig (newEnvConfig: EnvConfig) {
+    this.envConfig.dbName = newEnvConfig.dbName;
+    this.envConfig.envBaseURL = newEnvConfig.envBaseURL;
+    this.envConfig.envName = newEnvConfig.envName;
+    this.envConfig.envQueryPort = newEnvConfig.envQueryPort;
+  }
+
+  init (config: EnvConfig = DEFAULT_ENV_CONFIG) {
+    this.setEnvConfig(config);
     const {
       dbName,
       envName,
       envBaseURL,
       envQueryPort,
       stores = {},
-    } = CommitmentDB.envConfig;
+    } = this.envConfig;
 
     this.dbFullName = `${dbName}_${envName}`;
     this.queryURL = [envBaseURL, envQueryPort && `:${envQueryPort}`].filter(Boolean).join('');
@@ -73,7 +80,7 @@ class CommitmentDB implements ICommitmentDB {
   addAccount (account: AccountSchema) {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.accounts ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.accounts ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       tx.oncomplete = () => {
@@ -88,7 +95,7 @@ class CommitmentDB implements ICommitmentDB {
   addAbarMemos (abarMemos: AbarMemoSchema[]) {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.abarMemos ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.abarMemos ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       tx.oncomplete = () => {
@@ -106,7 +113,7 @@ class CommitmentDB implements ICommitmentDB {
   getAccounts (): Promise<AccountSchema[]> {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.accounts ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.accounts ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       const storeRequest = store.getAll();
@@ -120,7 +127,7 @@ class CommitmentDB implements ICommitmentDB {
   addCommitments (commitments: CommitmentSchema[]) {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.commitments ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.commitments ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       tx.oncomplete = () => {
@@ -138,7 +145,7 @@ class CommitmentDB implements ICommitmentDB {
   getCurrentMas (): Promise<IDBValidKey> {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.abarMemos ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.abarMemos ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       const openCursorRequest = store.openKeyCursor(null, 'prev')
@@ -158,7 +165,7 @@ class CommitmentDB implements ICommitmentDB {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     const idbKeyRange = end ? IDBKeyRange.bound(start, end) : IDBKeyRange.lowerBound(start);
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.abarMemos ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.abarMemos ?? {};
       const store = this.db.transaction(storeName, 'readwrite').objectStore(storeName);
       const openCursorRequest = store.openCursor(idbKeyRange);
       const abarMemos: AbarMemoSchema[] = [];
@@ -181,7 +188,7 @@ class CommitmentDB implements ICommitmentDB {
   getCommitments (axfrPublicKey: AccountSchema['axfrPublicKey']): Promise<CommitmentSchema[]> {
     if (!this.initialized) throw new Error('DB hasn\'t been initialized.');
     return new Promise((resolve, reject) => {
-      const { store: storeName = '' } = CommitmentDB.envConfig.stores?.commitments ?? {};
+      const { store: storeName = '' } = this.envConfig.stores?.commitments ?? {};
       const tx = this.db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
       const index = store.index('axfrPublicKey');

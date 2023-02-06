@@ -1,11 +1,17 @@
 import { db } from '../db';
+import { EnvConfig } from '../config';
 import * as Apis from '../apis';
 
-self.onmessage = async function () {
+type FetchWorkerData = {
+  envConfig?: EnvConfig;
+}
+
+self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
+  const { envConfig } = e.data as FetchWorkerData;
   try {
-    await db.init();
+    await db.init(envConfig);
     const mas = await Apis.getMAS();
     let currentMas = await db.getCurrentMas();
     console.log(`current mas: ${currentMas}, latest mas: ${mas}`);
