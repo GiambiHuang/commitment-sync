@@ -1,6 +1,6 @@
 export * from './db';
-export * as account from './account';
-export * as commitment from './commitment';
+export * as account from './modules/account';
+export * as commitment from './modules/commitment';
 
 // import { db } from './db';
 // import * as account from './account';

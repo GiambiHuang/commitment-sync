@@ -1,5 +1,5 @@
-import { db } from './db';
-import { AbarMemo } from './types';
+import { db } from '../db';
+import { AbarMemo } from '../types/types';
 
 export const getMAS = (queryURL?: string): Promise<number> => {
   return new Promise((resolve => {

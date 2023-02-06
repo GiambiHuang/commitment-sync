@@ -30,11 +30,19 @@ $ yarn build:umd
 }
 ```
 
-```js
+### initial indexedDB
+```ts
 import { db } from 'commitment-sync';
-// initial db first
-db.init();
 
+// initial db first
+const envConfig = {
+  dbName: 'commitment_sync',
+  envName: 'qa02',
+  envBaseURL: 'https://dev-qa02.dev.findora.org',
+  envQueryPort: '8667',
+};
+
+db.init(envConfig);
 ```
 
 ## account module

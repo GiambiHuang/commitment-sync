@@ -1,6 +1,6 @@
-import { initLedger } from './triple-masking';
+import { initLedger } from '../triple-masking';
 import { DEFAULT_ENV_CONFIG, EnvConfig } from './config';
-import { AbarMemoSchema, AccountSchema, CommitmentSchema } from './types';
+import { AbarMemoSchema, AccountSchema, CommitmentSchema } from '../types/types';
 
 interface ICommitmentDB {
   dbFullName: string;
@@ -22,14 +22,15 @@ class CommitmentDB implements ICommitmentDB {
   }
 
   setEnvConfig (newEnvConfig: EnvConfig) {
-    this.envConfig.dbName = newEnvConfig.dbName;
-    this.envConfig.envBaseURL = newEnvConfig.envBaseURL;
-    this.envConfig.envName = newEnvConfig.envName;
-    this.envConfig.envQueryPort = newEnvConfig.envQueryPort;
+    this.envConfig.dbName = newEnvConfig.dbName || DEFAULT_ENV_CONFIG.dbName;
+    this.envConfig.envBaseURL = newEnvConfig.envBaseURL || DEFAULT_ENV_CONFIG.envBaseURL;
+    this.envConfig.envName = newEnvConfig.envName || DEFAULT_ENV_CONFIG.envName;
+    this.envConfig.envQueryPort = newEnvConfig.envQueryPort || DEFAULT_ENV_CONFIG.envQueryPort;
   }
 
   init (config: EnvConfig = DEFAULT_ENV_CONFIG) {
     this.setEnvConfig(config);
+    console.log('this.envConfig.envName:', this.envConfig.envName, this.envConfig.envBaseURL);
     const {
       dbName,
       envName,
@@ -37,6 +38,7 @@ class CommitmentDB implements ICommitmentDB {
       envQueryPort,
       stores = {},
     } = this.envConfig;
+    console.log('this.envConfig.envName:', envName, envQueryPort);
 
     this.dbFullName = `${dbName}_${envName}`;
     this.queryURL = [envBaseURL, envQueryPort && `:${envQueryPort}`].filter(Boolean).join('');

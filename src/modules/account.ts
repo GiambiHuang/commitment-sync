@@ -1,5 +1,5 @@
-import { db } from './db';
-import { Account } from './types';
+import { db } from '../db';
+import { Account } from '../types/types';
 
 export const add = (account: Account) => {
   return db.addAccount({ ...account, lastSid: 0 });

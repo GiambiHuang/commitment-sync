@@ -1,5 +1,5 @@
 import * as ledger from 'findora-wallet-wasm/web-lightweight';
-import { AbarMemo, Account } from './types';
+import { AbarMemo, Account } from '../types/types';
 
 export const getLedger = async () => {
   try {

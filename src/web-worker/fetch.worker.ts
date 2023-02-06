@@ -1,18 +1,18 @@
 import { db } from '../db';
-import { EnvConfig } from '../config';
+import { EnvConfig } from '../db/config';
 import * as Apis from '../apis';
 
 type FetchWorkerData = {
-  envConfig?: EnvConfig;
+  config?: EnvConfig;
 }
 
 self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
-  const { envConfig } = e.data as FetchWorkerData;
+  const { config } = e.data as FetchWorkerData;
   try {
-    await db.init(envConfig);
-    const mas = await Apis.getMAS();
+    await db.init(config);
+    const mas = await Apis.getMAS(db.queryURL);
     let currentMas = await db.getCurrentMas();
     console.log(`current mas: ${currentMas}, latest mas: ${mas}`);
     if (currentMas >= mas) {

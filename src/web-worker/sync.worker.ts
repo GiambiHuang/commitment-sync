@@ -1,21 +1,21 @@
 import { decryptAbarMemo, initLedger } from '../triple-masking';
 import { getCommitment } from '../apis';
 import { db } from '../db';
-import { EnvConfig } from '../config';
-import { CommitmentSchema } from '../types';
+import { EnvConfig } from '../db/config';
+import { CommitmentSchema } from '../types/types';
 
 type SyncWorkerData = {
   mas: number
-  envConfig?: EnvConfig;
+  config?: EnvConfig;
 }
 
 self.onmessage = async function (e) {
   var window = globalThis;
   window.window = globalThis as any;
-  const { mas, envConfig } = e.data as SyncWorkerData;
+  const { mas, config } = e.data as SyncWorkerData;
   try {
     await Promise.all([
-      db.init(envConfig),
+      db.init(config),
       initLedger()
     ]);
     const accounts = await db.getAccounts();
