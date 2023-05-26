@@ -1,8 +1,3 @@
-export type Account = {
-  axfrPublicKey: string;
-  axfrSecretKey: string;
-}
-
 export type AbarMemo = [
   number,
   {
@@ -18,6 +13,8 @@ export type AccountSchema = Account &{
 export type AbarMemoSchema = {
   sid: number;
   memo: AbarMemo;
+  publickey: string;
+  commitment: string;
 }
 
 export type CommitmentSchema = {
@@ -30,4 +27,11 @@ export type FetchWorkerResponse = {
   success: boolean;
   message?: string;
   mas?: number;
+}
+
+export type Wallet = {
+  privateStr: string;
+  publickey: string;
+  // address: string;
+  // keypair: string;
 }

@@ -1,38 +1,30 @@
-import * as ledger from 'findora-wallet-wasm/web-lightweight';
-import { AbarMemo, Account } from '../types/types';
+import { AbarMemo, AbarMemoSchema } from '../types/types';
 
-export const getLedger = async () => {
-  try {
-    return ledger;
-  } catch (error) {
-    console.log(error);
-    return null;
+let isInit = false;
+
+type LedgerForWeb = typeof import('findora-wallet-wasm/bundler/wasm.js');
+
+export const getLedger = async (): Promise<LedgerForWeb> => {
+  const ledger = await import('findora-wallet-wasm/bundler/wasm.js');
+  if (!isInit) {
+    isInit = true;
+    await ledger.init_noah();
   }
+  return ledger;
 };
 
-export const initLedger = async () => {
-  try {
-    const ledger: any = await getLedger();
-    if (typeof ledger?.default === 'function') {
-      await ledger?.default();
-    }
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
-
-export const decryptAbarMemo = async (abarMemo: AbarMemo, axfrSecretKey: Account['axfrSecretKey']): Promise<boolean> => {
+export const decryptAbarMemos = async (abarMemos: AbarMemoSchema[], privateStr: string): Promise<AbarMemoSchema[]> => {
   const ledger = await getLedger();
-  const [_, myMemoData] = abarMemo;
-  const aXfrSecretKeyConverted = (ledger as any).axfr_keypair_from_string(axfrSecretKey);
-  const abarOwnerMemo = (ledger as any).AxfrOwnerMemo.from_json(myMemoData);
-  // let decryptedAbar: Uint8Array;
-  try {
-    (ledger as any).try_decrypt_axfr_memo(abarOwnerMemo, aXfrSecretKeyConverted);
-    return true;
-  } catch (error) {
-    return false;
+  const ownedAbarMemos: AbarMemoSchema[] = [];
+  for (const abarMemo of abarMemos) {
+    const [_, myMemoData] = abarMemo.memo;
+    const axfrSpendKey = ledger.create_keypair_from_secret(`"${privateStr}"`);
+    const abarOwnerMemo = ledger.AxfrOwnerMemo.from_json(myMemoData);
+    try {
+      ledger.try_decrypt_axfr_memo(abarOwnerMemo, axfrSpendKey);
+      ownedAbarMemos.push(abarMemo)
+    } catch (_) {
+    }
   }
+  return ownedAbarMemos;
 }

@@ -1,28 +1,17 @@
-export * from './db';
-export * as account from './modules/account';
-export * as commitment from './modules/commitment';
+export * from './sync';
+// export * as account from './modules/account';
+// export * as commitment from './modules/commitment';
 
-// import { db } from './db';
+// import { syncStore } from './sync';
 // import * as account from './account';
 // import * as commitment from './commitment';
 
 // declare global {
 //   interface Window {
-//     db: any;
-//     abarMemo: any;
-//     account: any;
-//     commitment: any;
+//     syncStore: any;
 //   }
 // }
 
 // if (__IN_LOCAL__) {
-//   window.db = db;
-//   window.account = account;
-//   window.commitment = commitment;
-// }
-
-// export {
-//   db,
-//   account,
-//   commitment
+//   window.syncStore = syncStore;
 // }
