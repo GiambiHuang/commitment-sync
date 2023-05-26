@@ -1,4 +1,4 @@
-import { AbarMemo, AbarMemoSchema } from '../types/types';
+import { AbarMemoSchema } from '../types/types';
 
 let isInit = false;
 
