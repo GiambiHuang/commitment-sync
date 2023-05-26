@@ -24,36 +24,41 @@ $ yarn build
 ```json
 {
   "dependencies": {
-    "findora-wallet-wasm": "https://github.com/FindoraNetwork/wasm-js-bindings.git#develop"
+    "findora-wallet-wasm": "https://github.com/FindoraNetwork/wasm-js-bindings.git#0.4.0-release"
   }
 }
 ```
 
 ### initial indexedDB
 ```ts
-import { db } from 'commitment-sync';
+import { syncStore } from 'commitment-sync';
 
 // initial db first
 const envConfig = {
   dbName: 'commitment_sync',
-  envName: 'qa02',
-  envBaseURL: 'https://dev-qa02.dev.findora.org',
-  envQueryPort: '8667',
+  envName: 'testnet',
+  envRpcUrl: 'https://prod-testnet.prod.findora.org:8667',
 };
 
-db.init(envConfig);
+syncStore.init(envConfig);
 ```
 
-- ## account module
-  - account.add(account)
+- ## get commitments by wallet
+  - **syncStore.getCommitments(wallet): Promise<string[]>**
     ```js
-    import { account } from 'commitment-sync';
-    account.add({
-      axfrPublicKey: '';
-      axfrSecretKey: '';
-    })
+    import { syncStore } from 'commitment-sync';
+    
+    const wallet = {
+      privateStr: '',
+      publickey: '',
+    };
+
+    syncStore
+      .getCommitments(wallet)
+      .then((commitments: string[]) => {})
     ```
-- ## commitment module
+
+<!-- - ## commitment module
   - commitment.syncAll(WorkerScriptURL, WorkerScriptURL)
     ```js
     import { commitment } from 'commitment-sync';
@@ -80,4 +85,4 @@ db.init(envConfig);
     const commitments = await commitment.get(axfrPublicKey);
 
     // commitments:CommitmentSchema[]
-    ```
+    ``` -->

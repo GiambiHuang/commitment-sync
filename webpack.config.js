@@ -1,12 +1,12 @@
 const path = require('path');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 
 const config = {
   mode: 'production',
   entry: {
     index: './src/index.ts',
   },
-  // externals: "findora-wallet-wasm/bundler/wasm.js",
+  externals: "findora-wallet-wasm/bundler/wasm.js",
   module: {
     rules: [
       {
@@ -35,11 +35,11 @@ const config = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      __IN_LOCAL__: false
-    }),
-  ],
+  // plugins: [
+  //   new webpack.DefinePlugin({
+  //     __IN_LOCAL__: false
+  //   }),
+  // ],
   devtool: 'source-map',
 };
  
