@@ -21,7 +21,7 @@ const STORE_ABAR_MEMOS = 'abar_memos' as const;
 export const DEFAULT_ENV_CONFIG: EnvConfig = {
   dbName: 'commitment_sync',
   envName: 'testnet',
-  envRpcUrl: 'https://prod-testnet.prod.findora.org:8667',
+  envRpcUrl: 'https://prod-testnet.prod.findora.org',
   envWssRpcUrl: 'wss://prod-testnet.prod.findora.org:8546',
   stores: {
     abarMemos: {

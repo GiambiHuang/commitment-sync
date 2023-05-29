@@ -44,7 +44,7 @@ class SyncStore implements ISyncStore {
     } = this.envConfig;
 
     this.dbFullName = `${dbName}_${envName}`;
-    this.queryURL = [envRpcUrl].filter(Boolean).join('');
+    this.queryURL = [envRpcUrl, ':8667'].filter(Boolean).join('');
 
     this.initialized = false;
     if (envWssRpcUrl) {
@@ -135,6 +135,7 @@ class SyncStore implements ISyncStore {
   }
 
   private async getOwnedAbars (wallet: Wallet) {
+    const ledger = await getLedger();
     const [
       encryptedAbarMemos,
       undecryptedAbarMemos,
@@ -151,7 +152,7 @@ class SyncStore implements ISyncStore {
       newEncryptedAbarMemos = ownedAbarMemos.map((abarMemos, idx) => ({
         ...abarMemos,
         publickey: wallet.publickey,
-        commitment: commitments[idx],
+        commitment: ledger.base64_to_base58(commitments[idx]),
       }))
       this.addAbarMemos(newEncryptedAbarMemos);
     }
@@ -251,7 +252,7 @@ class SyncStore implements ISyncStore {
     }
   }
 
-  async getCommitment (wallet: Wallet) {
+  async getCommitments (wallet: Wallet) {
     await this.checkSync();
     const ownedAbars = await this.getOwnedAbars(wallet);
     return ownedAbars.map(abar => abar.commitment);

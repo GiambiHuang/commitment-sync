@@ -37,7 +37,7 @@ import { syncStore } from 'commitment-sync';
 const envConfig = {
   dbName: 'commitment_sync',
   envName: 'testnet',
-  envRpcUrl: 'https://prod-testnet.prod.findora.org:8667',
+  envRpcUrl: 'https://prod-testnet.prod.findora.org',
 };
 
 syncStore.init(envConfig);
