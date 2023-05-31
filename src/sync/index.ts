@@ -20,13 +20,13 @@ class SyncStore implements ISyncStore {
   initialized = false;
   queryURL = '';
   envConfig = DEFAULT_ENV_CONFIG;
-  blockNumber = 0;
+  // blockNumber = 0;
 
   constructor () {
     getLedger();
   }
 
-  setEnvConfig (newEnvConfig: EnvConfig) {
+  private setEnvConfig (newEnvConfig: EnvConfig) {
     this.envConfig.dbName = newEnvConfig.dbName || DEFAULT_ENV_CONFIG.dbName;
     this.envConfig.envRpcUrl = newEnvConfig.envRpcUrl || DEFAULT_ENV_CONFIG.envRpcUrl;
     this.envConfig.envName = newEnvConfig.envName || DEFAULT_ENV_CONFIG.envName;
